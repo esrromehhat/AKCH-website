@@ -65,20 +65,28 @@
     }
   }
 
-  function toggleMobileMenu(show) {
-    if (show === undefined) {
-      show = !mainMenu.classList.contains('show');
-    }
-    if (show) {
-      mainMenu.classList.add('show');
-      menuToggle.classList.add('active');
-      menuToggle.setAttribute('aria-expanded', 'true');
-    } else {
-      mainMenu.classList.remove('show');
-      menuToggle.classList.remove('active');
-      menuToggle.setAttribute('aria-expanded', 'false');
-    }
+const mainMenu = document.getElementById('main-menu');
+const menuToggle = document.getElementById('menu-toggle');
+
+function toggleMobileMenu(show) {
+  if (show === undefined) {
+    show = !mainMenu.classList.contains('show');
   }
+  if (show) {
+    mainMenu.classList.add('show');
+    menuToggle.classList.add('active');
+    menuToggle.setAttribute('aria-expanded', 'true');
+  } else {
+    mainMenu.classList.remove('show');
+    menuToggle.classList.remove('active');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+}
+
+// Beispiel, wie du die Funktion aufrufst, wenn auf den Button geklickt wird:
+menuToggle.addEventListener('click', () => {
+  toggleMobileMenu();
+});
 
   function loadProfile() {
     const profile = JSON.parse(localStorage.getItem('atmprofile')) || {};
