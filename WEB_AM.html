@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A.K.H.C</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="WEB_AM.css">
+
+</head>
+<body>
+<div id="profile-icon" tabindex="0" role="button" aria-label="Profil öffnen" title="Profil"></div>
+<div id="app-container" role="main" aria-label="aTmHaBesha interaktive Lernplattform">
+<header>
+  <div id="logo-area" aria-label="App-Logo und Name">
+    <img src="Akch.png" alt="aTmHaBesha Logo" />
+    <h1>A.K.H.C</h1>
+  </div>
+  <div id="menu-toggle" aria-label="Menü umschalten" tabindex="0" role="button" aria-expanded="false" aria-controls="main-menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</header>
+<nav>
+ <ul class="menu" id="main-menu" role="menubar" aria-label="Hauptnavigation">
+   <li role="none"><button role="menuitem" data-target="home" class="active" aria-current="page">Home</button></li>
+   <li role="none"><button role="menuitem" data-target="ti-course">Ti-Course</button></li>
+   <li role="none"><button role="menuitem" data-target="games">Game</button></li>
+   <li role="none"><button role="menuitem" data-target="chat">Chat</button></li>
+   <li role="none"><button role="menuitem" data-target="Live">Live</button></li>
+   <li role="none"><button role="menuitem" data-target="settings">Setting</button></li>
+ </ul>
+</nav>
+<main tabindex="0">
+
+  <!-- Home -->
+  <section id="home" class="active" tabindex="0" aria-label="Startseite">
+    <div class="intro-content">
+    <h2>Welcome to <span class="highlight">A.K.H.C</span></h2>
+    <ul class="intro-main">
+      <li>A safe and colorful digital space created especially for children from the <strong>Habesha community</strong> — 
+        with extra care and love for <strong><em>autistic</em> children</strong>.</li>
+    </ul>
+    <ul class="intro-subtext">
+      <li>Learn, explore, and grow through interactive stories, fun games, and friendly guidance in <strong>Tigrinya</strong> and <strong>German</strong>.</li>
+    </ul>
+
+    <h2>🎮 Games</h2>
+    <ul class="feature-list">
+      <li><strong>1. Algebra Game:</strong> Learn math in a fun and easy way! Solve cool algebra challenges made just for kids.</li>
+      <li><strong>2. Memory Game:</strong> Train your brain! This game helps you with <em>focus</em> and <em>remembering things</em>.</li>
+      <li><strong>3. Learn Tigrinya:</strong> Discover Tigrinya through pictures, sounds and playful lessons.</li>
+    </ul>
+
+    <h2>👤 Profile</h2>
+    <p>Each child can choose a name and a profile picture – so it's your own personal learning space!</p>
+
+    <h2>💬 Chat (Coming Soon)</h2>
+    <p>Right now, the chat is not active. In the future, children will be able to safely send short messages with help.</p>
+
+    <h2>🔴 Live (Coming Soon)</h2>
+    <p>Live video or sound features are not working yet, but we are working hard to make them possible.</p>
+
+    </div>
+  </section>
+
+  <!--Live-->
+  <section id="Live" tabindex="0" aria-label="Live-Unterrichtsbereich">
+  <h2>🔴 Live lesson</h2>
+
+  <p>Here you can listen live or communicate with your teacher!</p>
+
+  <div class="live-controls">
+    <button id="live-audio-btn">LIVE</button>
+    <button id="wave-btn" hidden>👋</button>
+  </div>
+  <div id="live-audio-status" aria-live="polite"></div>
+  <div class="live-animation" id="wave-animation" hidden>
+    <p>👩‍🏫 The teacher is waving at you right now!</p>
+  </div>
+</section>
+
+<!-- Ti-Course -->
+<section id="ti-course" tabindex="0" aria-label="Tigrinya Kurs">
+  <h2>📘  Tigrinya Course for Children</h2>
+  <p>Welcome to the Tigrinya course! Here, you’ll learn Tigrinya in a playful way – with images, audio, and short exercises.</p>
+
+  <div class="lesson">
+    <h3>Lektion 1: Alphabet</h3>
+    <ul class="vocab-list">
+      <li>
+        <span class="speak" data-audio="be-bu-bi-ba.mp3">በ ቡ ቢ ባ ቤ ብ ቦ</span>
+        <span class="speak">ሀ ሁ ሂ ሃ ሄ ህ ሆ</span>
+        <span class="speak">ለ ሉ ሊ ላ ሌ ል ሎ</span>
+        <span class="speak">ሐ ሑ ሒ ሓ ሔ ሕ ሖ</span>
+        <span class="speak">መ ሙ ሚ ማ ሜ ም ሞ</span>
+        <span class="speak">ረ ሩ ሪ ራ ሬ ር ሮ</span>
+        <span class="speak">ሰ ሱ ሲ ሳ ሴ ስ ሶ</span>
+        <span class="speak">ሸ ሹ ሺ ሻ ሼ ሽ ሾ</span>
+        <span class="speak">ቀ ቁ ቂ ቃ ቄ ቅ ቆ</span>
+        <span class="speak">ቐ ቑ ቒ ቓ ቔ ቕ ቖ</span>
+        <span class="speak">ቨ ቩ ቪ ቫ ቬ ቭ ቮ</span>
+        <span class="speak">ተ ቱ ቲ ታ ቴ ት ቶ</span>
+        <span class="speak">ቸ ቹ ቺ ቻ ቼ ች ቾ</span>
+        <span class="speak">ነ ኑ ኒ ና ኔ ን ኖ</span>
+
+      </li>
+    </ul>
+  </div>
+  <div class="lesson">
+    <h3>Lektion 2: animals</h3>
+    <ul class="vocab-list">
+      <li>
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Hund" />
+        <span>Hund – ከልቢ (Kelbi)</span>
+        <button onclick="playAudio('dog')">🔊</button>
+      </li>
+      <li>
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="Katze" />
+        <span>cat – ዱሙ (Dumu)</span>
+        <button onclick="playAudio('cat')">🔊</button>
+        
+        <button onclick="playAudio('${wordDe.toLowerCase()}')">🔊</button>
+
+      </li>
+    </ul>
+  </div>
+
+  <div class="lesson">
+    <h3>Lektion 3: Color</h3>
+    <ul class="vocab-list">
+      <li><span>Rot – ቀይሕ (Qeyh)</span> <button onclick="playAudio('red')">🔊</button></li>
+      <li><span>Blau – ሰማያዊ (Semayawi)</span> <button onclick="playAudio('blue')">🔊</button></li>
+    </ul>
+  </div>
+
+  <div class="quiz">
+    <h3>🧠 Mini-Quiz</h3>
+    <p>Was heißt "Katze" auf Tigrinya?</p>
+    <button onclick="alert('✅ Richtig!')">ዱሙ</button>
+    <button onclick="alert('❌ Falsch!')">ኣንበሳ</button>
+  </div>
+
+   <h2>📘 Tigrinya-Lessons for Kids</h2>
+    <p>Create your own course with vocabulary, images, and audio.</p>
+  <!-- Eingabeformular -->
+    <div>
+      <h3>➕ Add New Course</h3>
+      <input type="text" id="lesson-title" placeholder="Lektions-Titel" />
+      <input type="text" id="word-de" placeholder="Wort (Deutsch)" />
+      <input type="text" id="word-ti" placeholder="Wort (Tigrinya)" />
+      <input type="text" id="img-url" placeholder="Bild-URL" />
+      <button id="rec-btn"  aria-pressed="false">● Aufnehmen</button>
+      <button id="stop-btn" disabled>■ Stop</button>
+      <span id="rec-status" aria-live="polite"></span>
+      <button id="add-course-btn">➕ Add</button>
+    </div>
+
+    <!-- Anzeige neuer Kurse -->
+    <div id="user-courses">
+      <h3>📚 Create Your Own Course</h3>
+    </div>
+</section>
+
+  <!-- Game -->
+  <section id="games" tabindex="0" aria-label="Spiele Bereich">
+    <h2>Game</h2>
+    <ul class="game-list" aria-label="Liste der Spiele">
+      <li><a href="ALGEBRA_GAME.html">Math_Game</a></li>
+      <li><a class="a1" href="Memory-play.html">Memory_Game</a></li>
+      <li><a class="a2" href="satrs.html">Tig_Game_Learn</a></li>
+    </ul>
+    <div class="game-details" aria-live="polite" aria-atomic="true"></div>
+
+    <ul>
+      <li><a href="ALGEBRA_GAME.html">1.Math_Game</a><br></li>
+      <li><a class="a1" href="Memory-play.html">2.Memory</a></li>
+      <li><a class="a2" href="satrs.html">3.Tig_Game_Learn</a></li>
+    </ul>
+  </section>
+
+  <!-- Chat -->
+  <section id="chat" tabindex="0" aria-label="Chat Bereich">
+    <h2>Chat</h2>
+    <div class="messages" aria-live="polite" aria-label="Chat Nachrichten"></div>
+    <form id="chat-form" aria-label="Nachricht senden">
+      <input type="text" id="chat-input" name="chat-input" placeholder="Nachricht eingeben..." autocomplete="off" required aria-required="true" />
+      <button type="submit" aria-label="Nachricht senden">Senden</button>
+    </form>
+  </section>
+
+  <!-- Einstellungen -->
+  <section id="settings" tabindex="0" aria-label="Einstellungen">
+    <h2>Settings</h2>
+    <label for="audio-lang">Audio output language</label>
+    <select id="audio-lang" name="audio-lang" aria-describedby="audio-info">
+      <option value="deutsch">Deutsch</option>
+      <option value="tigrinya">Tigrinya</option>
+    </select>
+    <small id="audio-info">Select the language for audio output.</small>
+
+    <label><input type="checkbox" id="notifications-toggle" /> Show notifications</label>
+    <label><input type="checkbox" id="profile-visibility" /> Make profile visible</label>
+
+    <div class="stats-toggle" tabindex="0" role="button" aria-pressed="false" aria-controls="stats-content" aria-expanded="false">
+        Show statistics
+    </div>
+    <div class="stats-content" id="stats-content" hidden aria-hidden="true">
+      <div class="stat-row"><span class="stat-label">Total play time: </span><span id="total-play-time">0</span> Stunden</div>
+      <div class="stat-row"><span class="stat-label">Levels achieved:</span> <span id="levels-achieved">5</span></div>
+      <div class="stat-row"><span class="stat-label">Rewards:</span> <span id="rewards">23</span> Sterne</div>
+    </div>
+
+    <hr />
+<div class="privacy-policy" tabindex="0" aria-label="Privacy Policy">
+  <h3>Privacy Policy</h3>
+  <p><strong>Data Collection:</strong> This website does not collect, process, or store any personal data on a server. All user interactions, settings, and preferences are handled entirely within your browser and remain on your device.</p>
+  <p><strong>Local Storage:</strong> Any data such as audio preferences, selected language, or usage statistics is saved locally in your browser's memory (e.g. localStorage or sessionStorage) and is not shared with any third-party service.</p>
+  <p><strong>No Cookies / No Tracking:</strong> This site does not use tracking cookies, analytics tools, or any third-party services that monitor your behavior. Your activity is private and inaccessible to anyone but you.</p>
+  <p><strong>Notifications and Profile Visibility:</strong> The notification and profile visibility options only affect what is shown on your screen. These features do not transmit or store any data externally.</p>
+  <p><strong>Audio Output:</strong> The audio feature is generated on your device and does not require an internet connection or backend processing. Your audio settings are used solely to personalize your experience.</p>
+  <p><strong>Children’s Privacy:</strong> This website is designed with children in mind and avoids collecting any identifiable or sensitive information. Parents can rest assured that the app operates safely offline.</p>
+  <p><strong>Your Control:</strong> You can clear your browser data at any time to reset all settings and remove any stored preferences or statistics.</p>
+  <p><strong>Contact:</strong> If you have any questions about privacy, feel free to contact the developer (if contact information is available on the homepage or about section.)</p>
+</div>
+
+</section>
+</main>
+
+
+<footer class="footer">
+    <p>&copy; 2025 A.K.H.C.</p>
+</footer>
+
+<script src="WEB_AM.js"></script>
+<script src="Live.js"></script>
+</div>
+</body>
+</html>

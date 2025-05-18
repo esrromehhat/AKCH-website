@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Eltern-App Live Dashboard</title>
+<style>
+  /* Reset & Basis */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    color: #fefefe;
+    display: flex;
+    flex-direction: column;
+  }
+  button {
+    background: #0a525f;
+    border: none;
+    color: #fefefe;
+    cursor: pointer;
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover:not(:disabled) {
+    background-color: #073a44;
+  }
+  button:disabled {
+    background-color: #7db6cb;
+    cursor: default;
+  }
+  input, select, textarea {
+    font: inherit;
+    padding: 0.5rem;
+    border-radius: 20px;
+    border: 1px solid #a9e2f3;
+    width: 100%;
+    max-width: 100%;
+    font-size: 1rem;
+    background-color: #d4f0fc;
+    color: #0a3e4f;
+  }
+  input::placeholder {
+    color: #6baec6;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: #33c3ff;
+    outline: none;
+    box-shadow: 0 0 6px #33c3ffaa;
+    background-color: #e4f8ff;
+    color: #024659;
+  }
+  /* Scrollbar Styling für Webkit */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #80c0db33;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #33c3ffcc;
+    border-radius: 10px;
+  }
+
+  /* Container im Dashboard */
+  #loginScreen, #dashboard {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  #loginScreen {
+    background: linear-gradient(135deg, #064663, #3a96c3);
+  }
+  
+  /* Login Form */
+  #loginForm {
+    background: #1484d433;
+    border-radius: 12px;
+    padding: 2rem;
+    min-width: 320px;
+    box-shadow: 0 0 20px #2da6ea99 inset;
+  }
+  #loginForm label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  #loginForm input {
+    margin-bottom: 1.2rem;
+  }
+  #loginError {
+    color: #ff5858;
+    font-weight: 700;
+    margin-bottom: 1.4rem;
+    height: 1.5rem;
+  }
+
+  /* Dashboard Layout */
+  #dashboard {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #2193b0dd, #6dd5eddd);
+  }
+  /* Topbar */
+  #topbar {
+    background: linear-gradient(90deg, #0b3d52, #104860);
+    color: #fefefe;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  #topbar #welcomeUser {
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+
+  /* Main Content Panels */
+  #mainPanels {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* Panels */
+  .panel {
+    background-color: #e3f5ffcc;
+    border-radius: 14px;
+    margin: 0.8rem;
+    box-shadow: 0 8px 16px #0294ec99;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    overflow-y: auto;
+    color: #103c55;
+    min-width: 320px;
+  }
+
+  /* Lernfortschritt */
+  .progress-group {
+    margin-bottom: 1rem;
+  }
+  .progress-label {
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+  }
+  .progress-bar-container {
+    background-color: #b7def9cc;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: linear-gradient(90deg, #0a74c7, #33a1ff);
+    height: 100%;
+    border-radius: 10px 0 0 10px;
+    max-width: 100%;
+    transition: width 0.7s ease;
+  }
+  /* Goals */
+  #goalsList {
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+  }
+  #goalsList li {
+    margin-bottom: 0.4rem;
+  }
+  /* Feedback */
+  .feedback-list {
+    background: #d9eefbcc;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    max-height: 160px;
+    overflow-y: auto;
+    color: #0e3a57;
+  }
+  .feedback-item {
+    margin-bottom: 0.75rem;
+  }
+
+  /* Chat */
+  #chatSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  #chatMessages {
+    flex: 1;
+    background: #bbdefb;
+    border-radius: 12px;
+    padding: 1rem;
+    font-size: 0.9rem;
+    overflow-y: auto;
+    color: #0d3c63;
+    box-shadow: inset 0 0 10px #4a90e224;
+  }
+  .chat-message {
+    margin-bottom: 0.8rem;
+    max-width: 85%;
+    word-wrap: break-word;
+  }
+  .chat-message .author {
+    font-weight: 700;
+    margin-right: 0.4rem;
+  }
+  .chat-message.parent .text {
+    background: #90caf9;
+    color: #072f57;
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px 20px 0 20px;
+    display: inline-block;
+  }
+  .chat-message.teacher .text {
+    background: #64b5f6;
+    color: #0e2d4a;
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px 20px 20px 0;
+    display: inline-block;
+  }
+  #chatInputArea {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+  }
+  #chatInput {
+    flex: 1;
+    border-radius: 50px;
+    border: 1px solid #70a9d6;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+  }
+  #chatSendBtn, #emojiToggleBtn {
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0;
+    text-align: center;
+    user-select: none;
+    background: linear-gradient(135deg, #0a74c7, #33a1ff);
+    box-shadow: 0 0 10px rgba(10, 116, 199, 0.6);
+    color: white;
+  }
+  #chatSendBtn:disabled {
+    background: #90c2ff;
+    cursor: default;
+    box-shadow: none;
+    color: #355c8c;
+  }
+  /* Emoji Picker */
+  #emojiPicker {
+    display: none;
+    margin-top: 0.5rem;
+    background: #d0e8ff;
+    border: 2px solid #3190ff;
+    border-radius: 16px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #emojiPicker button {
+    background: #2196f3;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 1.6rem;
+    box-shadow: 0 0 6px #0c6ed6;
+    user-select: none;
+    transition: transform 0.2s;
+  }
+  #emojiPicker button:hover {
+    transform: scale(1.3);
+  }
+
+  /* Video Call Section */
+  #videoCallSection {
+    flex-shrink: 0;
+  }
+  #videoCallSection h2 {
+    color: #074185;
+    margin-bottom: 0.8rem;
+  }
+  #videoContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-start;
+  }
+  video {
+    background: black;
+    border-radius: 14px;
+    width: 150px;
+    height: 120px;
+    object-fit: cover;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.17);
+  }
+  @media (max-width: 900px) {
+    #mainPanels {
+      flex-direction: column;
+      overflow: auto;
+    }
+    .panel {
+      min-width: 100%;
+      margin: 0.5rem 0.8rem;
+      max-height: 45vh;
+    }
+    #videoContainer {
+      justify-content: center;
+    }
+  }
+  @media (max-width: 400px) {
+    #chatInput {
+      font-size: 0.9rem;
+    }
+    #chatSendBtn, #emojiToggleBtn {
+      width: 36px;
+      height: 36px;
+      font-size: 1.2rem;
+    }
+  }
+  /* Gamification Footer */
+  #gamification {
+    background: linear-gradient(90deg, #0b3d52, #104860);
+    color: #afdafc;
+    padding: 0.9rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 0 0 14px 14px;
+    user-select: none;
+  }
+  /* Scrollbar Styling for non-webkit */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #33a1ff #b3d9ff;
+  }
+</style>
+</head>
+<body>
+  <main id="loginScreen" aria-label="Eltern-App Login-Bildschirm" role="main">
+    <form id="loginForm" aria-label="Login Formular">
+      <h1 style="text-align:center; margin-bottom:1rem;">Eltern-App Login</h1>
+      <label for="usernameInput">Benutzername</label>
+      <input id="usernameInput" name="username" type="text" role="textbox" aria-required="true" placeholder="Benutzername eingeben" autocomplete="username" required />
+      <label for="passwordInput">Passwort</label>
+      <input id="passwordInput" name="password" type="password" role="textbox" aria-required="true" placeholder="Passwort eingeben" autocomplete="current-password" required />
+      <div id="loginError" role="alert" aria-live="assertive" style="height:1.5rem; color:#ffa3a3; text-align:center; margin-top:0.5rem;"></div>
+      <button type="submit" aria-label="Einloggen Button" style="margin-top:1rem; width:100%;">Einloggen</button>
+    </form>
+  </main>
+
+  <section id="dashboard" aria-label="Eltern Dashboard" role="region" hidden>
+    <header id="topbar" role="banner">
+      <span id="welcomeUser" aria-live="polite"></span>
+      <button id="logoutBtn" aria-label="Ausloggen">Logout</button>
+    </header>
+    <main id="mainPanels" role="main">
+      <section id="leftPanel" class="panel" aria-label="Lernfortschritt und Empfehlungen" tabindex="0">
+        <h2>Lernfortschritt</h2>
+        <article class="progress-group" aria-live="polite" aria-atomic="true">
+          <div class="progress-label" id="progressMathLabel">Mathematik: <span id="progressMathPercent" aria-live="off">0%</span></div>
+          <div class="progress-bar-container" aria-hidden="true"><div class="progress-bar" id="progressMathBar" style="width: 0%;"></div></div>
+        </article>
+        <article class="progress-group" aria-live="polite" aria-atomic="true">
+          <div class="progress-label" id="progressLanguageLabel">Sprache: <span id="progressLanguagePercent" aria-live="off">0%</span></div>
+          <div class="progress-bar-container" aria-hidden="true"><div class="progress-bar" id="progressLanguageBar" style="width: 0%;"></div></div>
+        </article>
+        <article class="progress-group" aria-live="polite" aria-atomic="true">
+          <div class="progress-label" id="progressCreativityLabel">Kreativität: <span id="progressCreativityPercent" aria-live="off">0%</span></div>
+          <div class="progress-bar-container" aria-hidden="true"><div class="progress-bar" id="progressCreativityBar" style="width: 0%;"></div></div>
+        </article>
+        <h3>Erreichte Lernziele:</h3>
+        <ul id="goalsList" aria-label="Liste der erreichten Lernziele"></ul>
+        <h3>Feedback & Empfehlungen</h3>
+        <div class="feedback-list" id="feedbackList" role="region" aria-live="polite" aria-atomic="false" tabindex="0" aria-label="Feedback und Empfehlungen"></div>
+      </section>
+
+      <section id="rightPanel" class="panel" aria-label="Live Kommunikation">
+        <section id="chatSection" aria-label="Chat mit Lehrern und Eltern">
+          <h2>Live Chat</h2>
+          <div id="chatMessages" role="log" aria-live="polite" aria-relevant="additions" aria-atomic="false" tabindex="0" aria-label="Chat Nachrichten"></div>
+          <form id="chatForm" aria-label="Chat Nachricht senden">
+            <div id="chatInputArea" role="group" aria-label="Chat Eingabebereich">
+              <input type="text" id="chatInput" aria-label="Nachricht eingeben" autocomplete="off" placeholder="Nachricht eingeben..." maxlength="300" />
+              <button type="submit" id="chatSendBtn" aria-label="Nachricht senden" disabled>➤</button>
+              <button type="button" id="emojiToggleBtn" aria-label="Emoji Auswahl einblenden">😊</button>
+            </div>
+            <div id="emojiPicker" role="list" aria-label="Emoji Auswahl"></div>
+          </form>
+        </section>
+        <section id="videoCallSection" aria-label="Live Videoanruf Bereich">
+          <h2>Live Video Call (bis 10 Teilnehmer)</h2>
+          <div id="videoContainer" aria-live="polite" aria-atomic="true" aria-label="Video Streams der Teilnehmer"></div>
+          <div id="videoControls" role="group" aria-label="Videoanruf Steuerungen">
+            <button type="button" id="startCallBtn" aria-label="Videoanruf starten">Start Call</button>
+            <button type="button" id="endCallBtn" aria-label="Videoanruf beenden" disabled>Beenden</button>
+          </div>
+        </section>
+      </section>
+    </main>
+    <footer id="gamification" aria-live="polite" aria-atomic="true" aria-label="Gamification Punkte">
+      Belohnungspunkte: <span id="rewardPoints">0</span> 🎉
+    </footer>
+  </section>
+
+  <!-- PeerJS CDN -->
+  <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+
+  <script>
+  // === Variablen ===
+  const loginScreen = document.getElementById('loginScreen');
+  const dashboard = document.getElementById('dashboard');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const usernameInput = document.getElementById('usernameInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const welcomeUserElem = document.getElementById('welcomeUser');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  const progressMathBar = document.getElementById('progressMathBar');
+  const progressMathPercent = document.getElementById('progressMathPercent');
+  const progressLanguageBar = document.getElementById('progressLanguageBar');
+  const progressLanguagePercent = document.getElementById('progressLanguagePercent');
+  const progressCreativityBar = document.getElementById('progressCreativityBar');
+  const progressCreativityPercent = document.getElementById('progressCreativityPercent');
+  const goalsList = document.getElementById('goalsList');
+  const feedbackList = document.getElementById('feedbackList');
+
+  const chatForm = document.getElementById('chatForm');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const chatSendBtn = document.getElementById('chatSendBtn');
+  const emojiToggleBtn = document.getElementById('emojiToggleBtn');
+  const emojiPicker = document.getElementById('emojiPicker');
+
+  const rewardPointsElem = document.getElementById('rewardPoints');
+
+  const videoContainer = document.getElementById('videoContainer');
+  const startCallBtn = document.getElementById('startCallBtn');
+  const endCallBtn = document.getElementById('endCallBtn');
+
+  const ariaLive = document.getElementById('ariaLive');
+
+  // Beispiel-Daten
+  const exampleProgress = {
+    math: 75,
+    language: 62,
+    creativity: 84,
+    goals: [
+      "Rechenfertigkeiten bis 20",
+      "Erzählkompetenz verbessert",
+      "Kreatives Bastelprojekt abgeschlossen"
+    ]
+  };
+  const exampleFeedback = [
+    "Dein Kind macht große Fortschritte im Lesen.",
+    "Empfehlung: Übe weiterhin das kleine Einmaleins.",
+    "Achte auf regelmäßiges Vorlesen für Sprachentwicklung."
+  ];
+
+  // Demo-Datenbank Eltern-Accounts (Benutzername: passwort)
+  const usersDB = {
+    "eltern1": {password:"geheim123", role:"parent"},
+    "eltern2": {password:"passwort456", role:"parent"},
+    "admin1": {password:"adminpass", role:"admin"}
+  };
+
+  // Gamification
+  let rewardPoints = 0;
+  function incrementRewardPoints(points) {
+    rewardPoints += points;
+    rewardPointsElem.textContent = rewardPoints;
+    ariaLive.textContent = `Du hast ${rewardPoints} Belohnungspunkte.`;
+  }
+
+  // === Hilfsfunktionen ===
+  function showLoginError(message) {
+    loginError.textContent = message;
+  }
+  function resetLoginError() {
+    loginError.textContent = "";
+  }
+
+  function updateProgressBar(barElem, labelElem, value) {
+    value = Math.min(100, Math.max(0, value));
+    barElem.style.width = value + '%';
+    labelElem.textContent = value + '%';
+  }
+
+  function appendChatMessage(role, author, message) {
+    const messageEl = document.createElement('div');
+    messageEl.className = `chat-message ${role}`;
+    const authorEl = document.createElement('span');
+    authorEl.className = "author";
+    authorEl.textContent = author + ": ";
+    const textEl = document.createElement('span');
+    textEl.className = "text";
+    textEl.textContent = message;
+    messageEl.appendChild(authorEl);
+    messageEl.appendChild(textEl);
+    chatMessages.appendChild(messageEl);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function toggleEmojiPicker(show) {
+    if(show === true) {
+      emojiPicker.style.display = "flex";
+    } else if(show === false) {
+      emojiPicker.style.display = "none";
+    } else {
+      emojiPicker.style.display = emojiPicker.style.display === "flex" ? "none" : "flex";
+    }
+  }
+
+  // Zufälliger Nutzername für Demo VideoCall
+  function generateRandomUserName() {
+    const base = "Eltern";
+    const randomNum = Math.floor(Math.random() * 10000);
+    return base + randomNum;
+  }
+
+  // === Login-Verifizierung ===
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    resetLoginError();
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+    if(!username || !password) {
+      showLoginError("Bitte Benutzername und Passwort eingeben.");
+      return;
+    }
+    if(!usersDB[username]) {
+      showLoginError("Benutzer nicht gefunden.");
+      return;
+    }
+    if(usersDB[username].password !== password) {
+      showLoginError("Falsches Passwort.");
+      return;
+    }
+    if(usersDB[username].role !== "parent") {
+      showLoginError("Kein Zugriff für diese Rolle.");
+      return;
+    }
+    // Login erfolgreich
+    loginScreen.hidden = true;
+    dashboard.hidden = false;
+    initDashboard(username);
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    location.reload();
+  });
+
+  // === Gamification & Dashboard laden ===
+  function initDashboard(username) {
+    welcomeUserElem.textContent = `Willkommen, ${username}!`;
+    updateProgressBar(progressMathBar, progressMathPercent, exampleProgress.math);
+    updateProgressBar(progressLanguageBar, progressLanguagePercent, exampleProgress.language);
+    updateProgressBar(progressCreativityBar, progressCreativityPercent, exampleProgress.creativity);
+    goalsList.innerHTML = "";
+    exampleProgress.goals.forEach(goal => {
+      const li = document.createElement('li');
+      li.textContent = goal;
+      goalsList.appendChild(li);
+    });
+    feedbackList.innerHTML = "";
+    exampleFeedback.forEach(feed => {
+      const div = document.createElement('div');
+      div.classList.add('feedback-item');
+      div.textContent = feed;
+      feedbackList.appendChild(div);
+    });
+    // Chat setup
+    chatInput.disabled = false;
+    chatInput.value = "";
+    chatSendBtn.disabled = true;
+    chatMessages.innerHTML = "";
+  }
+
+  chatInput.addEventListener('input', () => {
+    chatSendBtn.disabled = chatInput.value.trim().length === 0;
+  });
+
+  chatForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if(chatSendBtn.disabled) return;
+    const message = chatInput.value.trim();
+    appendChatMessage("parent", "Ich", message);
+    chatInput.value = "";
+    chatSendBtn.disabled = true;
+    incrementRewardPoints(1);
+    // Demo-Antwort simulieren
+    setTimeout(() => {
+      appendChatMessage("teacher", "Lehrer", "Danke für deine Nachricht! Wir halten dich auf dem Laufenden. 😊");
+      incrementRewardPoints(1);
+    }, 1800);
+  });
+
+  // Emoji picker
+  const emojis = ["😀","😊","😍","👍","🎉","❤️","😎","🙌","🤗","🤔"];
+  emojis.forEach(emoji => {
+    const btn = document.createElement('button');
+    btn.type = "button";
+    btn.textContent = emoji;
+    btn.title = "Emoji " + emoji;
+    btn.setAttribute("aria-label", "Emoji " + emoji);
+    btn.addEventListener('click', () => {
+      chatInput.value += emoji;
+      chatInput.focus();
+      chatSendBtn.disabled = false;
+      toggleEmojiPicker(false);
+    });
+    emojiPicker.appendChild(btn);
+  });
+  emojiToggleBtn.addEventListener('click', () => {
+    toggleEmojiPicker();
+  });
+
+  // === Video Call mit PeerJS (Demo) ===
+  let myPeer, myPeerID, myStream;
+  const connections = new Map();
+  const dataConnections = new Map();
+  const videoElements = new Map();
+
+  function startPeerConnection(username) {
+    myPeer = new Peer(username + Math.floor(Math.random() * 10000), {
+      host: '0.peerjs.com',
+      port: 443,
+      secure: true,
+      debug: 2
+    });
+
+    myPeer.on('open', async id => {
+      myPeerID = id;
+      ariaLive.textContent = `Verbunden als ${id}`;
+      startCallBtn.disabled = false;
+    });
+    myPeer.on('error', err => {
+      alert("Fehler mit Videochat: " + err);
+    });
+    myPeer.on('call', call => {
+      if(myStream) {
+        call.answer(myStream);
+        setupCallListeners(call);
+      } else {
+        call.close();
+      }
+    });
+    myPeer.on('connection', conn => {
+      setupDataConnection(conn);
+    });
+  }
+
+  async function startLocalStream() {
+    myStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    addVideoElement(myPeerID, myStream, true);
+  }
+
+  function addVideoElement(peerId, stream, isLocal=false) {
+    if(videoElements.has(peerId)) return;
+    const video = document.createElement('video');
+    video.autoplay = true;
+    video.playsInline = true;
+    video.controls = false;
+    video.srcObject = stream;
+    video.id = 'video_' + peerId;
+    video.title = isLocal ? "Mein Video" : `Video von ${peerId}`;
+    if(isLocal) video.muted = true;
+    videoElements.set(peerId, video);
+    videoContainer.appendChild(video);
+  }
+
+  function removeVideoElement(peerId) {
+    const video = videoElements.get(peerId);
+    if(video) {
+      video.srcObject = null;
+      video.remove();
+      videoElements.delete(peerId);
+    }
+  }
+
+  function setupCallListeners(call) {
+    const peerId = call.peer;
+    call.on('stream', remoteStream => addVideoElement(peerId, remoteStream));
+    call.on('close', () => {
+      removeVideoElement(peerId);
+      connections.delete(peerId);
+      dataConnections.delete(peerId);
+      ariaLive.textContent = `${peerId} hat den Anruf verlassen.`;
+    });
+    call.on('error', err => console.log('Call error:', err));
+    connections.set(peerId, call);
+  }
+
+  function setupDataConnection(conn) {
+    conn.on('open', () => dataConnections.set(conn.peer, conn));
+    conn.on('data', data => {
+      try {
+        let msg = typeof data === 'string' ? JSON.parse(data) : data;
+        if(msg.type === "chat" && msg.author && msg.message) {
+          appendChatMessage("teacher", msg.author, msg.message);
+          incrementRewardPoints(1);
+        }
+      } catch(e) {
+        console.error("Fehler beim empfangen von Chat:", e);
+      }
+    });
+    conn.on('close', () => {
+      dataConnections.delete(conn.peer);
+      ariaLive.textContent = `Datenverbindung mit ${conn.peer} geschlossen.`;
+    });
+    conn.on('error', err => console.error("DataConn Fehler:", err));
+  }
+
+  function connectToPeer(peerId) {
+    if(peerId === myPeerID || connections.has(peerId)) return;
+    if(connections.size >= 9) {
+      alert("Maximale Teilnehmerzahl erreicht.");
+      return;
+    }
+    if(!myStream) {
+      alert("Starte zuerst deinen Videoanruf.");
+      return;
+    }
+    let call = myPeer.call(peerId, myStream);
+    setupCallListeners(call);
+    let dataConn = myPeer.connect(peerId);
+    setupDataConnection(dataConn);
+  }
+
+  startCallBtn.addEventListener('click', async () => {
+    startCallBtn.disabled = true;
+    endCallBtn.disabled = false;
+    await startLocalStream();
+    // PeerID Liste aus localStorage simulieren
+    let storedPeers = JSON.parse(localStorage.getItem("elternChatPeers") || "[]");
+    if(!storedPeers.includes(myPeerID)) storedPeers.push(myPeerID);
+    localStorage.setItem("elternChatPeers", JSON.stringify(storedPeers));
+    setTimeout(() => {
+      storedPeers.forEach(p => connectToPeer(p));
+      ariaLive.textContent = `Verbunden mit ${storedPeers.length-1} Teilnehmern.`;
+    }, 1500);
+  });
+
+  endCallBtn.addEventListener('click', () => {
+    connections.forEach((call, id) => { call.close(); removeVideoElement(id); });
+    dataConnections.forEach(dc => dc.close());
+    if(myStream) myStream.getTracks().forEach(t => t.stop());
+    videoElements.forEach(video => {
+      video.srcObject = null;
+      video.remove();
+    });
+    videoElements.clear();
+    connections.clear();
+    dataConnections.clear();
+
+    startCallBtn.disabled = false;
+    endCallBtn.disabled = true;
+
+    let peers = JSON.parse(localStorage.getItem("elternChatPeers") || "[]");
+    let idx = peers.indexOf(myPeerID);
+    if(idx !== -1) peers.splice(idx,1);
+    localStorage.setItem("elternChatPeers", JSON.stringify(peers));
+    ariaLive.textContent = "Videoanruf beendet.";
+  });
+
+  // Automatischer Fokus und Login-Versuch
+  window.onload = () => {
+    usernameInput.focus();
+    chatSendBtn.disabled = true;
+  }
+
+  // Starte Peer nach Login
+  function initAfterLogin(username) {
+    startPeerConnection(username);
+  }
+
+  // Login nach erfolgreichem Login starten
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    let u = usernameInput.value.trim();
+    let p = passwordInput.value;
+    if(usersDB[u] && usersDB[u].password === p && usersDB[u].role === "parent") {
+      loginScreen.hidden = true;
+      dashboard.hidden = false;
+      initDashboard(u);
+      initAfterLogin(u);
+    } else {
+      showLoginError("Ungültiger Benutzername oder Passwort.");
+    }
+  });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kids Memory Game - Responsive Rounds</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #FFD97D, #FF7E6B);
+    font-family: 'Comic Neue', cursive, sans-serif;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  #game-container {
+    background: #fffefddd;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    color: #e94b4b;
+    text-shadow: 2px 2px 4px #ab0f0f;
+  }
+  #round-info {
+    font-size: 1.4rem;
+    color: #444;
+    margin-bottom: 12px;
+  }
+  #grid {
+    flex-grow: 1;
+    display: grid;
+    grid-gap: 14px;
+    justify-content: center;
+    /* Default for desktop */
+    grid-template-columns: repeat(6, minmax(50px, 1fr));
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 0 4px;
+  }
+  .card {
+    background: #ffcccb;
+    border-radius: 14px;
+    box-shadow: 0 4px 8px #ff7a73;
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* 1:1 aspect ratio */
+    cursor: pointer;
+    perspective: 800px;
+    transition: transform 0.3s ease;
+  }
+  .card-inner {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+    border-radius: 14px;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.8rem;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .card-front {
+    background: #ff7979;
+    color: white;
+  }
+  .card-back {
+    background: #ffe0e0;
+    color: #cc4444;
+    transform: rotateY(180deg);
+  }
+  #status {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 1.3rem;
+    color: #555;
+    min-height: 28px;
+  }
+  #restart-btn {
+    margin-top: 14px;
+    align-self: center;
+    background: #ff5c5c;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.2rem;
+    padding: 12px 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px #d23a3a;
+    transition: background-color 0.3s ease;
+  }
+  #restart-btn:hover {
+    background: #e94444;
+  }
+  /* Responsive grid adjustments */
+  @media (max-width: 600px) {
+    #game-container {
+      max-width: 100%;
+      max-height: 95vh;
+      padding: 12px;
+    }
+    #grid {
+      grid-template-columns: repeat(4, minmax(60px, 1fr));
+      grid-gap: 12px;
+    }
+    .card-front, .card-back {
+      font-size: 2.5rem;
+    }
+  }
+  @media (max-width: 400px) {
+    #grid {
+      grid-template-columns: repeat(3, minmax(70px, 1fr));
+      grid-gap: 10px;
+    }
+    .card-front, .card-back {
+      font-size: 2.3rem;
+    }
+    #round-info {
+      font-size: 1.1rem;
+    }
+  }
+  @media (min-width: 900px) {
+    #grid {
+      grid-template-columns: repeat(8, minmax(55px, 1fr));
+      grid-gap: 16px;
+    }
+    .card-front, .card-back {
+      font-size: 3.2rem;
+    }
+  }
+
+</style>
+</head>
+<body>
+  <a href="WEB_AM.html" aria-label="Go to main page">Go to main page</a>
+  <div id="game-container" role="main" aria-label="Kids Memory Game">
+    <header>
+      <h1>Memory Game for Kids</h1>
+      <div id="round-info" aria-live="polite">Round 1</div>
+    </header>
+    <div id="grid" aria-live="polite" aria-relevant="additions"></div>
+    <div id="status" aria-live="assertive" role="alert"></div>
+    <button id="restart-btn" aria-label="Restart Game">Restart Game</button>
+  </div>
+
+<script>
+(() => {
+  'use strict';
+  const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐸','🐵','🐤','🦄','🐝','🐙'];
+  const grid = document.getElementById('grid');
+  const status = document.getElementById('status');
+  const roundInfo = document.getElementById('round-info');
+  const restartBtn = document.getElementById('restart-btn');
+
+  let round = 1;
+  let cards = [];
+  let firstCard = null;
+  let secondCard = null;
+  let lockBoard = false;
+  let matchedPairs = 0;
+  let totalPairs = 0;
+
+  // Compute pairs count based on round - start with 6 pairs, max 9 pairs to keep game manageable
+  function getPairsCount(round) {
+    return Math.min(6 + round - 1, 9);
+  }
+  // Shuffle array (Fisher-Yates)
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+  // Create card element
+  function createCard(emoji, index) {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.setAttribute('tabindex', '0'); // make focusable for keyboard
+    card.setAttribute('aria-label', 'Memory card');
+    card.dataset.emoji = emoji;
+    card.dataset.index = index;
+
+    const inner = document.createElement('div');
+    inner.classList.add('card-inner');
+    const front = document.createElement('div');
+    front.classList.add('card-front');
+    front.textContent = emoji;
+    const back = document.createElement('div');
+    back.classList.add('card-back');
+    back.textContent = "❓";
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    card.appendChild(inner);
+
+    // Click or key enter/space to flip card
+    card.addEventListener('click', () => onCardClick(card));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onCardClick(card);
+      }
+    });
+    return card;
+  }
+  // Flip card logic
+  function flipCard(card) {
+    card.classList.add('flipped');
+  }
+  function unflipCard(card) {
+    card.classList.remove('flipped');
+  }
+  function disableCard(card) {
+    card.removeEventListener('click', () => onCardClick(card));
+    card.style.cursor = 'default';
+    card.setAttribute('aria-disabled', 'true');
+  }
+  function onCardClick(card) {
+    if (lockBoard) return;
+    if (card === firstCard) return;
+    if (card.classList.contains('flipped')) return;
+
+    flipCard(card);
+
+    if (!firstCard) {
+      firstCard = card;
+      return;
+    }
+    secondCard = card;
+    lockBoard = true;
+    checkForMatch();
+  }
+  function checkForMatch() {
+    const isMatch = firstCard.dataset.emoji === secondCard.dataset.emoji;
+
+    if (isMatch) {
+      matchedPairs++;
+      status.textContent = `Good job! You found a pair 🥳 (${matchedPairs}/${totalPairs})`;
+      disableCard(firstCard);
+      disableCard(secondCard);
+      resetSelection();
+
+      if (matchedPairs === totalPairs) {
+        setTimeout(nextRound, 1500);
+      } else {
+        lockBoard = false;
+      }
+    } else {
+      status.textContent = 'Oops! Try again 😅';
+      setTimeout(() => {
+        unflipCard(firstCard);
+        unflipCard(secondCard);
+        resetSelection();
+        lockBoard = false;
+        status.textContent = '';
+      }, 1000);
+    }
+  }
+  function resetSelection() {
+    firstCard = null;
+    secondCard = null;
+  }
+  // Start next round
+  function nextRound() {
+    round++;
+    status.textContent = '';
+    roundInfo.textContent = `Round ${round}`;
+    setupRound();
+  }
+  // Setup cards and grid for the current round
+  function setupRound() {
+    matchedPairs = 0;
+    grid.innerHTML = '';
+    const pairsCount = getPairsCount(round);
+    totalPairs = pairsCount;
+
+    // Select emojis for pairs
+    const emojisForRound = EMOJIS.slice(0, pairsCount);
+
+    // Create pairs and shuffle
+    const cardsForRound = shuffle(emojisForRound.concat(emojisForRound));
+
+    cards = cardsForRound.map((emoji, idx) => createCard(emoji, idx));
+    cards.forEach(card => grid.appendChild(card));
+
+    // Adjust grid columns based on pairs count for better feel
+    if (pairsCount <= 6) {
+      grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    } else if (pairsCount <= 8) {
+      grid.style.gridTemplateColumns = 'repeat(5, 1fr)';
+    } else {
+      grid.style.gridTemplateColumns = 'repeat(6, 1fr)';
+    }
+
+    // Reset scroll if any
+    grid.scrollTop = 0;
+  }
+  // Restart game from round 1
+  function restartGame() {
+    round = 1;
+    roundInfo.textContent = 'Round 1';
+    status.textContent = '';
+    setupRound();
+  }
+  restartBtn.addEventListener('click', () => {
+    restartGame();
+    restartBtn.focus();
+  });
+  // Initialize game
+  setupRound();
+
+})();
+</script>
+</body>
+</html>

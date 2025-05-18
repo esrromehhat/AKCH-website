@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Algebra Quiz</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  h1, h2 {
+    margin: 0 0 10px 0;
+    font-weight: 700;
+  }
+  button {
+    background: #2979ff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  button:disabled {
+    background: #555;
+    cursor: not-allowed;
+  }
+  button:hover:not(:disabled) {
+    background: #5393ff;
+  }
+  #app-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    max-height: 600px;
+    max-width: 100vw;
+    background: #1e1e1e;
+    border-radius: 12px;
+    margin: 10px;
+  }
+  #quiz-section {
+    flex: 1 1 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  #whiteboard-container {
+    flex: 1 1 40%;
+    background: #222;
+    border-left: 3px solid #2979ff;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Small screens: whiteboard below quiz */
+  @media (max-width: 670px) {
+    #app-container {
+      flex-direction: column;
+      max-height: 600px;
+    }
+    #quiz-section {
+      flex: none;
+      height: 300px;
+      padding: 15px;
+    }
+    #whiteboard-container {
+      flex: none;
+      height: 280px;
+      border-left: none;
+      border-top: 3px solid #2979ff;
+    }
+  }
+  /* Quiz content */
+  #question-number {
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-bottom: 5px;
+  }
+  #question-text {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+  input[type="text"] {
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+    width: 100%;
+    background: #333;
+    color: white;
+  }
+  input[type="text"]:focus {
+    outline: 2px solid #5393ff;
+  }
+  #feedback {
+    min-height: 2.2em;
+    margin-bottom: 15px;
+    font-size: 1rem;
+  }
+  #controls {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  #controls button {
+    min-width: 120px;
+  }
+  /* Whiteboard controls */
+  #wb-toolbar {
+    background: #222;
+    padding: 8px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .wb-btn {
+    background: #2979ff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    color: white;
+    font-weight: bold;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  .wb-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+  }
+  .wb-btn:hover:not(:disabled) {
+    background: #5393ff;
+  }
+  #color-picker {
+    width: 32px;
+    height: 32px;
+    padding:0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  #whiteboard {
+    flex: 1;
+    background: white;
+    touch-action: none;
+    border-radius: 0 0 12px 12px;
+  }
+  /* Text input mode indicator */
+  #text-mode-indicator {
+    color: #2979ff;
+    font-weight: 700;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+  }
+  /* Mobile inputs fix */
+  input, button, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+</style>
+</head>
+<body>
+  <h1 style="text-align:center; margin-top:10px; user-select:none;">Algebra Quiz</h1>
+  <div id="app-container" aria-live="polite">
+    <section id="quiz-section" aria-label="Algebra Quiz Section">
+      <div id="start-screen" style="text-align:center;">
+        <button id="start-btn" aria-label="Starte das Quiz">Start</button>
+      </div>
+      <div id="question-screen" style="display:none; flex-direction: column; height: 100%;">
+        <p id="question-number" aria-live="polite"></p>
+        <p id="question-text"></p>
+        <input type="text" id="answer-input" aria-label="Antwort eingeben" autocomplete="off" />
+        <div id="feedback" role="alert" aria-live="assertive"></div>
+        <div id="controls">
+          <button id="check-btn" aria-label="Antwort überprüfen">Prüfen</button>
+          <button id="next-btn" style="display:none;" aria-label="Nächste Frage">Nächste Frage</button>
+          <button id="restart-btn" style="display:none;" aria-label="Quiz neu starten">Neu starten</button>
+        </div>
+      </div>
+    </section>
+    <section id="whiteboard-container" aria-label="Whiteboard zum Schreiben und Zeichnen">
+      <div id="wb-toolbar" role="toolbar" aria-label="Whiteboard Werkzeuge">
+        <button class="wb-btn" id="wb-pen" title="Stift" aria-pressed="true" aria-label="Stift Werkzeug">✏️</button>
+        <button class="wb-btn" id="wb-eraser" title="Radierer" aria-pressed="false" aria-label="Radierer Werkzeug">🧽</button>
+        <button class="wb-btn" id="wb-text" title="Text" aria-pressed="false" aria-label="Text Werkzeug">T</button>
+        <input type="color" id="color-picker" aria-label="Farbe auswählen" value="#000000" />
+        <button class="wb-btn" id="wb-undo" title="Rückgängig" aria-label="Rückgängig">↺</button>
+        <button class="wb-btn" id="wb-redo" title="Wiederherstellen" aria-label="Wiederherstellen">↻</button>
+        <button class="wb-btn" id="wb-info" title="Erklärung / KI Hilfe" aria-label="Erklärung oder KI Hilfe">💡</button>
+        <button class="wb-btn" id="wb-clear" title="Löschen" aria-label="Whiteboard leeren">🗑️</button>
+      </div>
+      <canvas id="whiteboard" tabindex="0" aria-label="Whiteboard Zeichenfläche"></canvas>
+    </section>
+  </div>
+
+<script src="ALGEBRA_GAME.js"></script>
+</body>
+</html>
+
